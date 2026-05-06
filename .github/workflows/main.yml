@@ -1,10 +1,49 @@
-- name: Install dependencies
+name: Flutter CI/CD Workflow for Hospital Project
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      # خطوة إضافية لطباعة مواقع وروابط تحميل بيئة فلاتر ومعلومات الأتمتة
+      - name: Show Flutter Download Sources & Info
+        run: |
+          echo "========================================================"
+          echo "🌐 Official Flutter Download & SDK Source Locations:"
+          echo "========================================================"
+          echo "• Main Website: https://flutter.dev"
+          echo "• SDK Releases & Architecture Archives: https://docs.flutter.dev/release/archive"
+          echo "• GitHub Official Repository: https://github.com/flutter/flutter"
+          echo "• Google Storage (Where GitHub Actions fetches Flutter): https://storage.googleapis.com/flutter_infra_release"
+          echo "========================================================"
+          echo "⚙️ This workflow utilizes the 'subosito/flutter-action' from the GitHub Marketplace"
+          echo "🔑 It automatically pulls the 'stable' channel environment for building the app."
+          echo "========================================================"
+
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '12.x'
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+
+      - name: Install dependencies
         run: flutter pub get
 
       - name: Run Analyze
         run: flutter analyze
-        continue-on-error: true # يمنع توقف الأتمتة إذا وُجدت تحذيرات في الكود
 
       - name: Run Automation Tests
         run: flutter test
-        continue-on-error: true # يمنع الفشل إذا لم تكن قد كتبت اختبارات محددة بعد
